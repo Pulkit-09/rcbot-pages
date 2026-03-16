@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC Bot — Connected!</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; max-width: 500px; margin: 100px auto; padding: 0 20px; text-align: center; color: #333; }
+        .check { font-size: 64px; }
+        h1 { font-size: 28px; }
+        p { color: #555; font-size: 16px; }
+        code { background: #f4f4f4; padding: 4px 10px; border-radius: 6px; font-size: 14px; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <div class="check">✅</div>
+    <h1>Whoop Connected!</h1>
+    <p>Your Whoop account has been linked to RC Bot successfully.</p>
+    <p>Copy the code below and send it to your Telegram bot:</p>
+    <p><code id="code">Loading...</code></p>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get("code");
+        document.getElementById("code").textContent = code || "No code found — please try again.";
+    </script>
+</body>
+</html>
