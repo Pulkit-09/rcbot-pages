@@ -3,25 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RC Bot — Connected!</title>
+    <title>RC Bot — Whoop Callback</title>
     <style>
-        body { font-family: -apple-system, sans-serif; max-width: 500px; margin: 100px auto; padding: 0 20px; text-align: center; color: #333; }
+        body { font-family: -apple-system, sans-serif; max-width: 500px; margin: 60px auto; padding: 0 20px; text-align: center; color: #333; }
         .check { font-size: 64px; }
-        h1 { font-size: 28px; }
-        p { color: #555; font-size: 16px; }
-        code { background: #f4f4f4; padding: 4px 10px; border-radius: 6px; font-size: 14px; word-break: break-all; }
+        .error { font-size: 64px; }
+        h1 { font-size: 26px; }
+        p { color: #555; font-size: 16px; line-height: 1.6; }
+        code { background: #f0f0f0; padding: 8px 14px; border-radius: 8px; font-size: 14px; word-break: break-all; display: block; margin: 10px 0; }
+        .debug { font-size: 12px; color: #999; margin-top: 30px; text-align: left; background: #f9f9f9; padding: 10px; border-radius: 8px; }
     </style>
 </head>
 <body>
-    <div class="check">✅</div>
-    <h1>Whoop Connected!</h1>
-    <p>Your Whoop account has been linked to RC Bot successfully.</p>
-    <p>Copy the code below and send it to your Telegram bot:</p>
-    <p><code id="code">Loading...</code></p>
+    <div id="main"></div>
+    <div class="debug" id="debug"></div>
+
     <script>
         const params = new URLSearchParams(window.location.search);
-        const code = params.get("code");
-        document.getElementById("code").textContent = code || "No code found — please try again.";
+        const hash   = new URLSearchParams(window.location.hash.replace('#',''));
+        const main   = document.getElementById('main');
+        const debug  = document.getElementById('debug');
+
+        // Show full URL for debugging
+        debug.innerHTML = '<b>Full URL:</b><br>' + window.location.href;
+
+        // Try to find code in various places
+        const code  = params.get('code')  || hash.get('code');
+        const error = params.get('error') || hash.get('error');
+        const errorDesc = params.get('error_description') || hash.get('error_description') || '';
+
+        if (error) {
+            main.innerHTML = `
+                <div class="error">❌</div>
+                <h1>Authorisation Failed</h1>
+                <p><b>Error:</b> ${error}</p>
+                <p>${decodeURIComponent(errorDesc)}</p>
+                <p>Go back to Telegram and try <b>/whoopconnect</b> again.</p>
+            `;
+        } else if (code) {
+            main.innerHTML = `
+                <div class="check">✅</div>
+                <h1>Whoop Connected!</h1>
+                <p>Copy the code below and send it to your Telegram bot:</p>
+                <code>${code}</code>
+                <p>Send this to the bot:<br><b>/whoopcode ${code}</b></p>
+            `;
+        } else {
+            main.innerHTML = `
+                <div class="error">⚠️</div>
+                <h1>No Code Found</h1>
+                <p>The URL didn't contain an authorisation code.</p>
+                <p>This usually means the Whoop app redirect URL doesn't match exactly.</p>
+                <p>Check the full URL below and look for a <b>code=</b> parameter.</p>
+            `;
+        }
     </script>
 </body>
 </html>
